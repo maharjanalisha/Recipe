@@ -9,5 +9,5 @@ package Model;
  * @author ACER
  */
 public class MealType {
-    BREAKFAST, LUNCH, DINNER
+    
 }
