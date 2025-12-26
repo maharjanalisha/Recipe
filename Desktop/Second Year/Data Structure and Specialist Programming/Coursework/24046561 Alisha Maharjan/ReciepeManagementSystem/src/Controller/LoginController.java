@@ -1,19 +1,36 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Controller;
 
-import Model.User;
+import View.MainFrame;
 
-/**
- *
- * @author ACER
- */
 public class LoginController {
 
-    public User authenticate(String text, String string) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    private MainFrame mainFrame;
+
+    public LoginController(MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
     }
-    
+
+    // Allow ANY username & password (just not empty)
+    public boolean authenticate(String username, String password) {
+
+        if (username == null || username.trim().isEmpty()) {
+            return false;
+        }
+
+        if (password == null || password.trim().isEmpty()) {
+            return false;
+        }
+
+        // No restriction — accept all
+        return true;
+    }
+
+    // Navigate based on role
+    public void loginSuccess(boolean isAdmin) {
+        if (isAdmin) {
+            mainFrame.showScreen("ADMIN");
+        } else {
+            mainFrame.showScreen("USER");
+        }
+    }
 }
