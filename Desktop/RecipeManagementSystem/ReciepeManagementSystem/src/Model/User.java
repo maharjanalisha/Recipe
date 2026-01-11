@@ -28,7 +28,7 @@ public class User {
         return password;
     }
     
-    public String getROle(){
+    public String getROle(){  // role
         return role;
     }
 
