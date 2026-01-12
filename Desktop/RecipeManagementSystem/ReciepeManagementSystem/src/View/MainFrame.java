@@ -28,6 +28,7 @@ public class MainFrame extends javax.swing.JFrame {
     private MealPlannerPanel mealPlannerPanel;
     private ShoppingListPanel shoppingListPanel;
     private SignUpPanel signUpPanel;
+    private AllRecipesPanel allRecipesPanel;
     
     public MainFrame() {
         initComponents();
@@ -45,6 +46,7 @@ public class MainFrame extends javax.swing.JFrame {
         mealPlannerPanel = new MealPlannerPanel(this);
         shoppingListPanel = new ShoppingListPanel(this);
         signUpPanel = new SignUpPanel(this);
+        allRecipesPanel = new AllRecipesPanel(this);
         
         //adding panels
         getContentPane().add(new LoginPanel(this), "LOGIN");
@@ -57,6 +59,8 @@ public class MainFrame extends javax.swing.JFrame {
         getContentPane().add(new MealPlannerPanel(this), "MEAL_PLANNER");
         getContentPane().add(new ShoppingListPanel(this), "SHOPPING_LIST");
         getContentPane().add(new SignUpPanel(this), "SIGNUP");
+        getContentPane().add(new AllRecipesPanel(this), "ALL_RECIPES");
+
         
         //show first screen
         showScreen("LOGIN");
