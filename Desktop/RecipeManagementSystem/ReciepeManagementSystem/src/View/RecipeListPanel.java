@@ -21,11 +21,19 @@ private MainFrame mainFrame;
    
 
 
-   public RecipeListPanel(MainFrame frame) {
+   public RecipeListPanel(MainFrame frame, boolean isAdmin) {
     this.mainFrame = frame;
     initComponents();
+    RecipeController.loadSampleData();
     loadRecipes();
+
+    if (!isAdmin) {
+        jButton2.setVisible(false); // Add
+        jButton3.setVisible(false); // Edit
+        jButton4.setVisible(false); // Delete
+    }
 }
+
    public void loadRecipes() {
     DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
     model.setRowCount(0);
@@ -39,6 +47,30 @@ private MainFrame mainFrame;
         });
     }
 }
+private void showRecipeInstructions() {
+
+    int row = jTable1.getSelectedRow();
+
+    if (row == -1) {
+        javax.swing.JOptionPane.showMessageDialog(
+            this,
+            "Please select a recipe"
+        );
+        return;
+    }
+
+    Recipe recipe = RecipeController.getAllRecipes().get(row);
+
+    javax.swing.JOptionPane.showMessageDialog(
+        this,
+        recipe.getInstructions(),
+        recipe.getName() + " - Cooking Process",
+        javax.swing.JOptionPane.INFORMATION_MESSAGE
+    );
+}
+
+
+
 
 
     /**
@@ -60,6 +92,8 @@ private MainFrame mainFrame;
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
+        jButtonViewRecipe = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(204, 204, 255));
         setLayout(new java.awt.GridBagLayout());
@@ -94,6 +128,11 @@ private MainFrame mainFrame;
         add(jTextField1, gridBagConstraints);
 
         jButton1.setText("Search");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 1;
@@ -179,6 +218,23 @@ private MainFrame mainFrame;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new java.awt.Insets(34, 90, 77, 0);
         add(jButton5, gridBagConstraints);
+
+        jButton6.setFont(new java.awt.Font("Segoe UI", 0, 10)); // NOI18N
+        jButton6.setText("Sort By Name");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+        add(jButton6, new java.awt.GridBagConstraints());
+
+        jButtonViewRecipe.setText("View Recipes");
+        jButtonViewRecipe.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonViewRecipeActionPerformed(evt);
+            }
+        });
+        add(jButtonViewRecipe, new java.awt.GridBagConstraints());
     }// </editor-fold>//GEN-END:initComponents
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
@@ -229,10 +285,76 @@ private MainFrame mainFrame;
         loadRecipes();
     }
 
-    RecipeController.deleteRecipe(selectedRow);
-    loadRecipes(); // refresh table
-
+  
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        String keyword = jTextField1.getText().trim();
+
+    // If search field is empty → show all recipes
+    if (keyword.isEmpty() || keyword.equalsIgnoreCase("Search Recipe")) {
+        loadRecipes();
+        return;
+    }
+
+    java.util.List<Recipe> results =
+            RecipeController.linearSearchByName(keyword);
+
+
+    // If no results found
+    if (results.isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, "No recipes found");
+        loadRecipes(); // reset table
+        return;
+    }
+
+    // Show filtered results
+    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+    model.setRowCount(0);
+
+    for (Recipe r : results) {
+        model.addRow(new Object[]{
+        r.getName(),
+        r.getCategory(),
+        r.getTime(),
+        r.getDifficulty()
+    });
+
+    }
+
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        // TODO add your handling code here:
+        
+
+    DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+    model.setRowCount(0);
+
+    for (Recipe r : RecipeController.sortByName()) {
+        model.addRow(new Object[]{
+            r.getName(),
+            r.getCategory(),
+            r.getTime(),
+            r.getDifficulty()
+        });
+    }
+
+
+   
+
+    
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButtonViewRecipeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonViewRecipeActionPerformed
+        // TODO add your handling code here:
+        showRecipeInstructions();
+    }//GEN-LAST:event_jButtonViewRecipeActionPerformed
+                                       
+
+    
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -241,6 +363,8 @@ private MainFrame mainFrame;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButtonViewRecipe;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;

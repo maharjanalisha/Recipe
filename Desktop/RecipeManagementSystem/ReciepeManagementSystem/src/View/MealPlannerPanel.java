@@ -12,6 +12,8 @@ import javax.swing.table.DefaultTableModel;
  */
 public class MealPlannerPanel extends javax.swing.JPanel {
 private MainFrame mainFrame;
+private boolean isAdminView = false;
+
 
     /**
      * Creates new form MealPlannerPanel
@@ -34,6 +36,12 @@ private MainFrame mainFrame;
     this.mainFrame = frame;
     initComponents();
     loadDummyMealPlan();
+}
+public void setAdminView(boolean isAdmin) {
+    this.isAdminView = isAdmin;
+
+    // Admin cannot generate shopping list
+    jButton1.setEnabled(!isAdmin);
 }
 
 
@@ -138,8 +146,14 @@ private MainFrame mainFrame;
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-        mainFrame.showScreen("USER");
+        // TODO add your handling code here:       
+        if (isAdminView) {
+            mainFrame.showScreen("ADMIN");
+        } else {
+            mainFrame.showScreen("USER");
+        
+}
+
     }//GEN-LAST:event_jButton2ActionPerformed
 
 

@@ -14,34 +14,37 @@ import javax.swing.JOptionPane;
  */
 public class RecipeFormPanel extends javax.swing.JPanel {
 private MainFrame mainFrame;
-private javax.swing.JTextArea instructionsTextArea;
+
 
 public void clearForm() {
-    jTextField1.setText("");      // Recipe name
-    jTextField2.setText("");      // Cooking time
-    Dinner.setSelectedIndex(0);   // Category
-    jComboBox1.setSelectedIndex(0); // Difficulty
+    jTextField1.setText("");
+    jTextField2.setText("");
+    Dinner.setSelectedIndex(0);
+    jComboBox1.setSelectedIndex(0);
+    jTextArea1.setText("");
+    RecipeController.editIndex = -1;
+}
 
-    if (instructionsTextArea != null) {
-        instructionsTextArea.setText("");
+public void loadRecipeForEdit() {
+    if (RecipeController.editIndex == -1) {
+        clearForm();
+        return;
     }
 
-    RecipeController.editIndex = -1; // reset edit mode
+    Recipe r = RecipeController.getAllRecipes().get(RecipeController.editIndex);
+
+    jTextField1.setText(r.getName());
+    Dinner.setSelectedItem(r.getCategory());
+    jTextField2.setText(String.valueOf(r.getTime()));
+    jComboBox1.setSelectedItem(r.getDifficulty());
+    jTextArea1.setText(r.getInstructions());
 }
+
+
 
 public RecipeFormPanel(MainFrame frame) {
         this.mainFrame = frame;
         initComponents();
-        
-        //ADD instructions textarea into scroll pane
-        instructionsTextArea = new javax.swing.JTextArea();
-        instructionsTextArea.setLineWrap(true);
-        instructionsTextArea.setWrapStyleWord(true);
-        jScrollPane3.setViewportView(instructionsTextArea);
-
-
-        jButton1.addActionListener(this::jButton1ActionPerformed);
-
     }
 
 
@@ -49,32 +52,9 @@ public RecipeFormPanel(MainFrame frame) {
      * Creates new form RecipeFormPanel
      */
      //adding recipe
-     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {
-    String name = jTextField1.getText().trim();
-    String category = Dinner.getSelectedItem().toString();
-    String time = jTextField2.getText().trim();
-    String difficulty = jComboBox1.getSelectedItem().toString();
-    String instructions = instructionsTextArea.getText().trim();
-    if (name.isEmpty() || time.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Please fill all fields");
-        return;
-    }
+     
 
-    Recipe recipe = new Recipe(name, category, time, difficulty);
-    recipe.setInstructions(instructions);
-    
-    if (RecipeController.editIndex == -1) {
-    RecipeController.addRecipe(recipe);   // CREATE
-    JOptionPane.showMessageDialog(this, "Recipe added successfully");
-    } else {
-    RecipeController.updateRecipe(RecipeController.editIndex, recipe); // UPDATE
-    RecipeController.editIndex = -1;
-    JOptionPane.showMessageDialog(this, "Recipe updated successfully");
-}
-
-  mainFrame.showScreen("RECIPES");
-
-     }   
+     
 
 
     /**
@@ -242,6 +222,11 @@ public RecipeFormPanel(MainFrame frame) {
 
         jButton1.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jButton1.setText("Save Recipes");
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 13;
@@ -319,10 +304,47 @@ public RecipeFormPanel(MainFrame frame) {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
-        mainFrame.showScreen("RECIPES");
-        
-      
+        RecipeController.editIndex = -1;
+        clearForm();
+        mainFrame.showScreen("RECIPES_ADMIN");
+
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+         String name = jTextField1.getText().trim();
+        String category = Dinner.getSelectedItem().toString();
+        String difficulty = jComboBox1.getSelectedItem().toString();
+        String instructions = jTextArea1.getText().trim();
+
+        if (name.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Recipe name cannot be empty");
+            return;
+        }
+
+        int cookingTime;
+        try {
+            cookingTime = Integer.parseInt(jTextField2.getText().trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Cooking time must be a number");
+            return;
+        }
+
+        Recipe recipe = new Recipe(name, category, cookingTime, difficulty);
+        recipe.setInstructions(instructions);
+
+        if (RecipeController.editIndex == -1) {
+            RecipeController.addRecipe(recipe);
+            JOptionPane.showMessageDialog(this, "Recipe added successfully");
+        } else {
+            RecipeController.updateRecipe(RecipeController.editIndex, recipe);
+            RecipeController.editIndex = -1;
+            JOptionPane.showMessageDialog(this, "Recipe updated successfully");
+        }
+
+        clearForm();
+        mainFrame.showScreen("RECIPES_ADMIN");
+    }//GEN-LAST:event_jButton1ActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

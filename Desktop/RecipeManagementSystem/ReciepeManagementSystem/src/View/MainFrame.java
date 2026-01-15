@@ -23,16 +23,21 @@ public class MainFrame extends javax.swing.JFrame {
     private LoginPanel loginPanel;
     private AdminDashboardPanel adminDashboardPanel;
     private UserDashboardPanel userDashboardPanel;
-    private RecipeListPanel recipeListPanel;
+    private RecipeListPanel recipeListPanelAdmin;
+    private RecipeListPanel recipeListPanelUser;
+
     private RecipeFormPanel recipeFormPanel;
     private MealPlannerPanel mealPlannerPanel;
     private ShoppingListPanel shoppingListPanel;
     private SignUpPanel signUpPanel;
-    private AllRecipesPanel allRecipesPanel;
+    
+    
     
     public MainFrame() {
         initComponents();
-        
+        RecipeController.loadSampleData();
+
+
         //creating cardlayout 
         cardLayout=new CardLayout();
         getContentPane().setLayout(cardLayout);
@@ -41,25 +46,29 @@ public class MainFrame extends javax.swing.JFrame {
         loginPanel = new LoginPanel(this);
         adminDashboardPanel = new AdminDashboardPanel(this);
         userDashboardPanel = new UserDashboardPanel(this);
-        recipeListPanel = new RecipeListPanel(this);
+        recipeListPanelAdmin = new RecipeListPanel(this, true);
+        recipeListPanelUser  = new RecipeListPanel(this, false);
         recipeFormPanel = new RecipeFormPanel(this);
         mealPlannerPanel = new MealPlannerPanel(this);
         shoppingListPanel = new ShoppingListPanel(this);
         signUpPanel = new SignUpPanel(this);
-        allRecipesPanel = new AllRecipesPanel(this);
+        
         
         //adding panels
-        getContentPane().add(new LoginPanel(this), "LOGIN");
-        getContentPane().add(new AdminDashboardPanel(this), "ADMIN");
-        getContentPane().add(new UserDashboardPanel(this), "USER");
-        getContentPane().add(new RecipeListPanel(this), "RECIPES");
-        recipeFormPanel = new RecipeFormPanel(this);
-        getContentPane().add(recipeFormPanel, "RECIPE_FORM");
+        getContentPane().add(loginPanel, "LOGIN");
+        getContentPane().add(adminDashboardPanel, "ADMIN");
+        getContentPane().add(userDashboardPanel, "USER");
 
-        getContentPane().add(new MealPlannerPanel(this), "MEAL_PLANNER");
-        getContentPane().add(new ShoppingListPanel(this), "SHOPPING_LIST");
-        getContentPane().add(new SignUpPanel(this), "SIGNUP");
-        getContentPane().add(new AllRecipesPanel(this), "ALL_RECIPES");
+        getContentPane().add(recipeListPanelAdmin, "RECIPES_ADMIN");
+        getContentPane().add(recipeListPanelUser, "RECIPES_USER");
+
+        getContentPane().add(recipeFormPanel, "RECIPE_FORM");
+        getContentPane().add(mealPlannerPanel, "MEAL_PLANNER");
+        getContentPane().add(shoppingListPanel, "SHOPPING_LIST");
+        getContentPane().add(signUpPanel, "SIGNUP");
+
+        
+
 
         
         //show first screen
@@ -75,15 +84,42 @@ public class MainFrame extends javax.swing.JFrame {
     
     }
         //adding method
-        public void showScreen(String screenName) {
-        for (java.awt.Component comp : getContentPane().getComponents()) {
-            if (comp instanceof RecipeListPanel) {
-                ((RecipeListPanel) comp).loadRecipes();
-            }
-        }
+      public void showScreen(String screenName) {
 
-        cardLayout.show(getContentPane(), screenName);
-        }
+    // ===== Recipe Lists =====
+    if (screenName.equals("RECIPES_ADMIN")) {
+        recipeListPanelAdmin.loadRecipes();
+    }
+
+    if (screenName.equals("RECIPES_USER")) {
+        recipeListPanelUser.loadRecipes();
+    }
+
+    // ===== Recipe Form =====
+    if (screenName.equals("RECIPE_FORM")) {
+        recipeFormPanel.clearForm();
+    }
+
+    // ===== Meal Planner (Admin) =====
+    if (screenName.equals("MEAL_PLANNER_ADMIN")) {
+        mealPlannerPanel.setAdminView(true);
+        cardLayout.show(getContentPane(), "MEAL_PLANNER");
+        return;
+    }
+
+    // ===== Meal Planner (User) =====
+    if (screenName.equals("MEAL_PLANNER_USER")) {
+        mealPlannerPanel.setAdminView(false);
+        cardLayout.show(getContentPane(), "MEAL_PLANNER");
+        return;
+    }
+
+    // ===== Default Navigation =====
+    cardLayout.show(getContentPane(), screenName);
+}
+
+
+
     
        
     /**

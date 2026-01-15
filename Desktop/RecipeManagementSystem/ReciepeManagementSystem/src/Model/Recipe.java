@@ -4,12 +4,12 @@ public class Recipe {
 
     private String name;
     private String category;
-    private String time;
+    private int time;
     private String difficulty;
     private String instructions;
 
-    // ✅ FIXED constructor
-    public Recipe(String name, String category, String time, String difficulty) {
+    // Constructor
+    public Recipe(String name, String category, int time, String difficulty) {
         this.name = name;
         this.category = category;
         this.time = time;
@@ -25,7 +25,7 @@ public class Recipe {
         return category;
     }
 
-    public String getTime() {
+    public int getTime() {
         return time;
     }
 
@@ -37,7 +37,7 @@ public class Recipe {
         return instructions;
     }
 
-    // Setters
+    // Setter
     public void setInstructions(String instructions) {
         this.instructions = instructions;
     }
